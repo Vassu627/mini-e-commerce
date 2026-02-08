@@ -1,4 +1,4 @@
-import { cart } from "../data/store.js";
+import { cart, products } from "../data/store.js";
 
 const addToCart = async (req, res, next) => {
   try {
@@ -25,10 +25,44 @@ const addToCart = async (req, res, next) => {
 };
 
 const getCart = async (req, res) => {
+  const detailedCart = cart.map((item) => {
+    const product = products.find((p) => p.id === item.productId);
+    return {
+      ...product,
+      quantity: item.quantity,
+    };
+  });
+
+  res.json(detailedCart);
+};
+
+const removeFromCart = (req, res) => {
+  const index = cart.findIndex((item) => item.productId === req.params.id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Item not found" });
+  }
+
+  cart.splice(index, 1);
+  res.json(cart);
+};
+
+const updateCartItem = (req, res) => {
+  const { quantity } = req.body;
+
+  const item = cart.find((i) => i.productId === req.params.id);
+
+  if (!item) {
+    return res.status(404).json({ error: "Item not found" });
+  }
+
+  item.quantity = quantity;
   res.json(cart);
 };
 
 export default {
   getCart,
   addToCart,
+  updateCartItem,
+  removeFromCart,
 };
