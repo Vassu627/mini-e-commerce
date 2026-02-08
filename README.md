@@ -18,8 +18,7 @@ It includes a React (Next.js) frontend, a Node.js + Express backend, MongoDB dat
 
 - Node.js
 - Express.js
-- MongoDB
-- Mongoose ODM
+- in memory data
 - Environment variables with dotenv
 
 ### DevOps
