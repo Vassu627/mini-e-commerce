@@ -1,19 +1,27 @@
-import Product from "../models/Product.js";
+import { products } from "../data/store.js";
+import { v4 as uuid } from "uuid";
 
-const getProducts = async (req, res, next) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    next(err);
-  }
+const getProducts = (req, res) => {
+  res.json(products);
 };
 
 const createProduct = async (req, res, next) => {
   try {
-    const product = new Product(req.body);
-    const saved = await product.save();
-    res.status(201).json(saved);
+    const { name, price, image } = req.body;
+
+    if (!name || !price || !image) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const newProduct = {
+      id: uuid(),
+      name,
+      price: Number(price),
+      image,
+    };
+
+    products.push(newProduct);
+    res.status(201).json(newProduct);
   } catch (err) {
     next(err);
   }
@@ -21,11 +29,16 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const product = products.find((p) => p.id === req.params.id);
 
-    res.json(updated);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    const { id, ...updates } = req.body;
+    Object.assign(product, updates);
+
+    res.json(product);
   } catch (err) {
     next(err);
   }
@@ -33,7 +46,13 @@ const updateProduct = async (req, res, next) => {
 
 const deleteProduct = async (req, res, next) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    const index = products.findIndex((p) => p.id === req.params.id);
+
+    if (index === -1) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    products.splice(index, 1);
     res.json({ message: "Product deleted" });
   } catch (err) {
     next(err);
