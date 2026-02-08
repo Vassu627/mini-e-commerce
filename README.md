@@ -51,7 +51,7 @@ It includes a React (Next.js) frontend, a Node.js + Express backend, MongoDB dat
 - Cart APIs
 - Validation middleware
 - Centralized error handling
-- MongoDB database integration
+- used in-memory for database
 
 ---
 
@@ -61,10 +61,8 @@ mini-e-commerce/
 │
 ├── backend/
 │ ├── src/
-│ │ ├── config/
 │ │ ├── controllers/
 │ │ ├── middleware/
-│ │ ├── models/
 │ │ ├── routes/
 │ │ └── server.js
 │ ├── Dockerfile
@@ -115,7 +113,6 @@ Example request body for cart:
 ### Backend .env
 
 PORT=5000
-MONGO_URI=mongodb://mongo:27017/ecommerce
 
 ## Running the Project with Docker (Recommended)
 
